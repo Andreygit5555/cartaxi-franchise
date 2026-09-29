@@ -399,12 +399,19 @@ form{display:grid;gap:14px}
 .foot__links a:hover{color:#FFFFFF}
 .foot p{color:var(--faint);font-size:.79rem;line-height:1.6;margin-top:28px;max-width:96ch}
 
+[hidden]{display:none!important}
+
 /* ── ФРАХТ: сетка смен в первом экране ──────────────────────────────── */
 .shifts{margin-top:14px;background:var(--paper);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow-md)}
 .shifts__hd{display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid var(--line-soft);background:var(--paper-3)}
 .shifts__hd b{font-family:var(--disp);font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
 .shifts__hd i{margin-left:auto;font-style:normal;font-size:.7rem;color:var(--faint);font-variant-numeric:tabular-nums}
 .shifts__grid{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:5px;padding:16px 18px 12px}
+.shifts__grid--order{grid-template-columns:repeat(15,minmax(0,1fr));gap:3px}
+.shifts__grid--order .shift{font-size:0;border-radius:3px}
+.tabs{display:flex;gap:3px;margin-left:auto;background:var(--paper);border:1px solid var(--line);border-radius:7px;padding:3px}
+.tabs button{border:0;background:transparent;font-family:var(--disp);font-weight:700;font-size:.67rem;letter-spacing:.03em;padding:5px 11px;border-radius:5px;color:var(--muted);cursor:pointer;transition:background .16s,color .16s}
+.tabs button[aria-pressed=true]{background-image:var(--grad);color:#FFFFFF}
 .shift{aspect-ratio:1;border-radius:5px;background:var(--paper-3);display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-size:.6rem;font-weight:700;color:var(--faint);transition:background-color .35s,color .35s}
 .shift.on{background-image:var(--grad);color:#FFFFFF}
 .shifts__ft{display:flex;align-items:baseline;gap:10px;padding:0 18px 16px;font-size:.84rem;color:var(--muted)}
@@ -446,6 +453,7 @@ form{display:grid;gap:14px}
 </svg>
     <nav class="bar__nav">
       <a href="#how">Как работает</a>
+      <a href="#tariffs">Тарифы</a>
       <a href="#why">Почему фикс</a>
       <a href="#calc">Калькулятор</a>
       <a href="#rules">Условия</a>
@@ -464,15 +472,15 @@ form{display:grid;gap:14px}
     <div>
       <span class="hero__eyebrow"><i class="dot"></i>Фрахт · фиксированная оплата</span>
       <h1>Ваш эвакуатор в&nbsp;<em>фрахте</em> — 450 000 ₽ в месяц</h1>
-      <p class="hero__lede">15 000 ₽ за смену 12 часов, 30 смен в месяц. Заказы даёт CarTaxi. Сколько их окажется в смене — на вашу оплату не влияет.</p>
+      <p class="hero__lede">Два способа получить эту сумму: отработать 30 смен по 12 часов или выполнить 150 заказов. Заказы даёт CarTaxi — вы выбираете, за что вам платят.</p>
       <div class="hero__acts">
         <a class="btn btn--primary" href="#lead">Отдать эвакуатор в фрахт</a>
         <a class="btn btn--ghost" href="#calc">Посчитать смены</a>
       </div>
       <div class="hero__stats">
-        <div class="hero__stat"><div class="fig">450 000 ₽</div><span>в месяц при 30 сменах</span></div>
-        <div class="hero__stat"><div class="fig">15 000 ₽</div><span>за смену, независимо от заказов</span></div>
-        <div class="hero__stat"><div class="fig">12 часов</div><span>смена, график гибкий</span></div>
+        <div class="hero__stat"><div class="fig">450 000 ₽</div><span>в месяц в обоих тарифах</span></div>
+        <div class="hero__stat"><div class="fig">30 смен</div><span>по 15 000 ₽ за смену</span></div>
+        <div class="hero__stat"><div class="fig">150 заказов</div><span>или по 3 000 ₽ за заказ</span></div>
       </div>
     </div>
     <div>
@@ -482,9 +490,14 @@ form{display:grid;gap:14px}
         <span class="stage__hint">Наведите курсор — эвакуатор повернётся</span>
       </div>
       <div class="shifts">
-        <div class="shifts__hd"><i class="dot"></i><b>Месяц по сменам</b><i id="shiftsCount">30 из 30</i></div>
+        <div class="shifts__hd"><i class="dot"></i><b>Месяц в тарифе</b>
+          <div class="tabs" id="heroTabs" role="group" aria-label="Тариф">
+            <button type="button" data-t="shift" aria-pressed="true">Смены</button>
+            <button type="button" data-t="order" aria-pressed="false">Заказы</button>
+          </div>
+        </div>
         <div class="shifts__grid" id="shiftsGrid"></div>
-        <div class="shifts__ft"><span>Каждая смена — 15 000 ₽</span><b id="shiftsSum">450 000 ₽</b></div>
+        <div class="shifts__ft"><span id="shiftsUnit">Каждая смена — 15 000 ₽</span><b id="shiftsSum">450 000 ₽</b></div>
       </div>
     </div>
   </div>
@@ -530,12 +543,48 @@ form{display:grid;gap:14px}
   </div>
 </section>
 
-<!-- ═══ 02 ПОЧЕМУ ФИКС ═══ -->
-<section class="sec sec--tint" id="why">
+<!-- ═══ 02 ТАРИФЫ ═══ -->
+<section class="sec sec--tint" id="tariffs">
   <div class="wrap">
     <div class="head">
-      <span class="code">02 / Смысл фикса</span>
-      <h2 class="h2">Смена стоит 15 000 ₽ в любом случае</h2>
+      <span class="code">02 / Тарифы</span>
+      <h2 class="h2">Одна сумма, два способа её закрыть</h2>
+      <p class="lede">450 000 ₽ можно получить за отработанное время или за выполненный объём. Тариф выбирается один раз при заключении договора — деньги одинаковые, риск и свобода разные.</p>
+    </div>
+    <div class="grid g2">
+      <div class="card fit">
+        <div class="col__hd"><span class="col__badge col__badge--violet">Тариф 1 · за смены</span></div>
+        <div class="fig" style="font-size:2.1rem;color:var(--violet)">15 000 ₽<span style="font-family:var(--body);font-weight:400;font-size:.9rem;color:var(--muted);letter-spacing:0"> за смену</span></div>
+        <p class="txt" style="margin:.8em 0 1.2em">30 смен по 12 часов — 450 000 ₽. Платят за время на линии, а не за результат.</p>
+        <ul class="list">
+          <li>Пустая смена оплачивается полностью</li>
+          <li>Риск недобора заказов — на платформе</li>
+          <li>Доход известен до начала месяца</li>
+          <li>Вы обязаны быть на линии все 12 часов</li>
+        </ul>
+      </div>
+      <div class="card fit">
+        <div class="col__hd"><span class="col__badge col__badge--lime">Тариф 2 · за заказы</span></div>
+        <div class="fig" style="font-size:2.1rem;color:var(--violet)">3 000 ₽<span style="font-family:var(--body);font-weight:400;font-size:.9rem;color:var(--muted);letter-spacing:0"> за заказ</span></div>
+        <p class="txt" style="margin:.8em 0 1.2em">150 заказов за месяц — те же 450 000 ₽. Платят за объём, а не за часы.</p>
+        <ul class="list list--lime">
+          <li>Закрыли норму раньше — остаток месяца ваш</li>
+          <li>Темп и график вы задаёте сами</li>
+          <li>Риск — на вас: не выполнили объём, не получили сумму</li>
+          <li>Вы обязаны взять все заказы, которые дают</li>
+        </ul>
+      </div>
+    </div>
+    <p class="disclaim">150 заказов за 30 смен — это ровно 5 заказов в смену. Отсюда простое правило: делаете стабильно больше пяти — тариф за заказы закроет месяц быстрее и освободит дни; меньше пяти — за смены надёжнее, потому что платят за присутствие, а не за результат. В калькуляторе ниже можно подставить свой темп.</p>
+  </div>
+</section>
+
+<!-- ═══ 03 ПОЧЕМУ ФИКС ═══ -->
+<section class="sec" id="why">
+  <div class="wrap">
+    <div class="head">
+      <span class="code">03 / Смысл фикса</span>
+      <h2 class="h2">В тарифе за смены час стоит одинаково</h2>
       <p class="lede">В сдельной модели доход собирается из случайностей: сколько было вызовов, какой чек, далеко ли подача. Во фрахте все три переменные перестают на вас влиять.</p>
     </div>
     <div class="grid g3">
@@ -549,18 +598,18 @@ form{display:grid;gap:14px}
       </div>
       <div class="card">
         <div class="fig" style="font-size:1.9rem;color:var(--violet)">Плотная смена</div>
-        <p class="txt" style="margin-top:.7em">Заказы шли один за другим все 12 часов. Оплата та же — 15 000 ₽. Это обратная сторона фикса, и мы говорим о ней прямо: потолок смены зафиксирован вместе с полом.</p>
+        <p class="txt" style="margin-top:.7em">Заказы шли один за другим все 12 часов. Оплата та же — 15 000 ₽. Это обратная сторона фикса, и мы говорим о ней прямо: потолок смены зафиксирован вместе с полом. Если вы стабильно быстрее пяти заказов за смену — вам в тариф за заказы, там потолка нет.</p>
       </div>
     </div>
     <p class="disclaim">Фрахт — это обмен потенциального максимума на гарантированный минимум. Если ваш эвакуатор стабильно даёт больше 15 000 ₽ чистыми за 12 часов, сдельная модель выгоднее — <a href="../" style="color:var(--violet)">посмотрите франшизу</a>.</p>
   </div>
 </section>
 
-<!-- ═══ 03 ГРАФИК ═══ -->
-<section class="sec">
+<!-- ═══ 04 ГРАФИК ═══ -->
+<section class="sec sec--tint">
   <div class="wrap">
     <div class="head">
-      <span class="code">03 / График</span>
+      <span class="code">04 / График</span>
       <h2 class="h2">30 смен можно расставить как удобно</h2>
       <p class="lede">Смена — это 12 часов на линии. Как они лягут на календарь, решаете вы: ежедневно, блоками или в две смены с напарником. Ставка от расстановки не меняется.</p>
     </div>
@@ -569,72 +618,80 @@ form{display:grid;gap:14px}
   </div>
 </section>
 
-<!-- ═══ 04 КАЛЬКУЛЯТОР ═══ -->
-<section class="sec sec--tint" id="calc">
+<!-- ═══ 05 КАЛЬКУЛЯТОР ═══ -->
+<section class="sec" id="calc">
   <div class="wrap">
     <div class="head">
-      <span class="code">04 / Калькулятор</span>
-      <h2 class="h2">Сколько смен — столько денег</h2>
-      <p class="lede">Единственная переменная во фрахте — количество смен. Подвиньте ползунок и посмотрите, как меняется месяц.</p>
+      <span class="code">05 / Калькулятор</span>
+      <h2 class="h2">Какой тариф выгоднее именно вам</h2>
+      <p class="lede">Всё упирается в один показатель — сколько заказов вы реально успеваете за смену. Подставьте свой темп и посмотрите, что происходит с обоими тарифами.</p>
     </div>
     <div class="calc">
       <div class="panel">
         <div class="field">
+          <div class="field__hd"><label>Тариф</label></div>
+          <div class="seg" id="segTariff" role="group" aria-label="Тариф">
+            <button type="button" data-t="shift" aria-pressed="true">За смены</button>
+            <button type="button" data-t="order" aria-pressed="false">За заказы</button>
+          </div>
+          <p class="form__note" id="tariffNote"></p>
+        </div>
+        <div class="field" id="fieldShifts">
           <div class="field__hd"><label for="iShifts">Смен в месяц</label><span class="field__val" id="vShifts">30</span></div>
           <input type="range" id="iShifts" min="10" max="45" step="1" value="30">
           <div class="field__scale"><span>10</span><span>45</span></div>
         </div>
-        <div class="field">
-          <div class="field__hd"><label>Кто за рулём</label></div>
-          <div class="seg" id="segCrew" role="group" aria-label="Кто за рулём">
-            <button type="button" data-crew="solo" aria-pressed="true">Только я</button>
-            <button type="button" data-crew="duo" aria-pressed="false">Я и напарник</button>
-          </div>
-          <p class="form__note" id="crewNote"></p>
+        <div class="field" id="fieldOrders" hidden>
+          <div class="field__hd"><label for="iOrders">Заказов в месяц</label><span class="field__val" id="vOrders">150</span></div>
+          <input type="range" id="iOrders" min="50" max="300" step="10" value="150">
+          <div class="field__scale"><span>50</span><span>300</span></div>
         </div>
         <div class="field">
-          <div class="field__hd"><label>Ставка за смену</label><span class="field__val">15 000 ₽</span></div>
-          <p class="form__note">Фиксирована договором. 12 часов на линии · 1 250 ₽ в час.</p>
+          <div class="field__hd"><label for="iSpeed">Ваш темп, заказов за смену</label><span class="field__val" id="vSpeed">5</span></div>
+          <input type="range" id="iSpeed" min="2" max="12" step="1" value="5">
+          <div class="field__scale"><span>2</span><span>12</span></div>
+          <p class="form__note" id="speedNote"></p>
         </div>
       </div>
 
       <div>
         <div class="out">
-          <div><div class="out__k">Смен в месяц</div><div class="fig out__v" id="oShifts">—<small>смен</small></div></div>
+          <div><div class="out__k">Смен на линии</div><div class="fig out__v" id="oShifts">—<small>смен</small></div></div>
           <div class="out--hero"><div class="out__k">Доход в месяц</div><div class="fig out__v" id="oMonth">—<small>₽</small></div></div>
-          <div><div class="out__k">Часов на линии</div><div class="fig out__v" id="oHours">—<small>ч / мес</small></div></div>
-          <div><div class="out__k">Доход за год</div><div class="fig out__v" id="oYear">—<small>₽</small></div></div>
+          <div><div class="out__k">Заказов за месяц</div><div class="fig out__v" id="oOrders">—<small>шт</small></div></div>
+          <div><div class="out__k" id="oEffK">Эффективно</div><div class="fig out__v" id="oEff">—<small>₽</small></div></div>
         </div>
 
         <div class="chart">
           <div class="chart__hd">
-            <h4>Как накапливается доход за месяц</h4>
+            <h4>Сколько смен нужно, чтобы закрыть 450 000 ₽</h4>
             <em id="chartNote"></em>
           </div>
-          <div id="stairChart"></div>
+          <div id="cmpChart"></div>
           <div class="breakdown" id="breakdown"></div>
         </div>
 
-        <p class="disclaim">Базовое предложение — 450 000 ₽ за 30 смен по 15 000 ₽. Количество смен согласуется индивидуально и закрепляется в договоре. Состав расходов на топливо и расходные материалы обсуждается при заключении договора и в расчёт выше не заложен. Информация справочная, не является публичной офертой.</p>
+        <p class="disclaim">Базовые предложения — 450 000 ₽ за 30 смен по 15 000 ₽ либо 450 000 ₽ за 150 заказов по 3 000 ₽. Объём и тариф согласуются индивидуально и закрепляются в договоре. Состав расходов на топливо и расходные материалы обсуждается при заключении договора и в расчёт выше не заложен. Темп в заказах за смену вы задаёте сами — платформа его не гарантирует. Информация справочная, не является публичной офертой.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══ 05 УСЛОВИЯ ═══ -->
-<section class="sec" id="rules">
+<!-- ═══ 06 УСЛОВИЯ ═══ -->
+<section class="sec sec--tint" id="rules">
   <div class="wrap">
     <div class="head">
-      <span class="code">05 / Условия</span>
+      <span class="code">06 / Условия</span>
       <h2 class="h2">Что стороны обязаны друг другу</h2>
-      <p class="lede">Фикс работает только при встречном обязательстве. Платформа не может платить за смену вслепую, если заказы в ней можно отклонять — поэтому требование одно и жёсткое.</p>
+      <p class="lede">Фикс работает только при встречном обязательстве. Платформа не может платить вслепую, если заказы можно отклонять, — поэтому требование в обоих тарифах одно и жёсткое.</p>
     </div>
     <div class="grid g2">
       <div class="card fit">
         <div class="col__hd"><span class="col__badge col__badge--violet">Вы обязуетесь</span></div>
         <ul class="list">
           <li><b>Выполнять все заказы, которые даёт платформа</b> — без выбора «выгодных» и без отказов по своему усмотрению</li>
-          <li>Быть на линии все 12 часов смены и отвечать на распределение</li>
+          <li>В тарифе за смены — быть на линии все 12 часов и отвечать на распределение</li>
+          <li>В тарифе за заказы — закрыть согласованный объём за месяц</li>
           <li>Держать эвакуатор исправным, заправленным и готовым к выезду</li>
           <li>Работать по договору как ИП или самозанятый, с документами на технику</li>
           <li>Предупреждать заранее, если смена срывается</li>
@@ -643,8 +700,8 @@ form{display:grid;gap:14px}
       <div class="card">
         <div class="col__hd"><span class="col__badge col__badge--lime">CarTaxi обязуется</span></div>
         <ul class="list list--lime">
-          <li><b>Платить 15 000 ₽ за смену</b> независимо от числа и стоимости заказов в ней</li>
-          <li>Обеспечивать поток заказов и вести диспетчеризацию</li>
+          <li><b>Платить по выбранному тарифу</b> — 15 000 ₽ за смену или 3 000 ₽ за заказ, независимо от их стоимости</li>
+          <li>Обеспечивать объём заказов; порядок на случай недобора фиксируется договором</li>
           <li>Рассчитываться по графику, закреплённому в договоре</li>
           <li>Брать на себя общение с клиентами, споры и рекламации</li>
           <li>Согласовывать график смен заранее, а не ставить задним числом</li>
@@ -654,11 +711,11 @@ form{display:grid;gap:14px}
   </div>
 </section>
 
-<!-- ═══ 06 КОМУ ПОДХОДИТ ═══ -->
-<section class="sec sec--tint">
+<!-- ═══ 07 КОМУ ПОДХОДИТ ═══ -->
+<section class="sec">
   <div class="wrap">
     <div class="head">
-      <span class="code">06 / Партнёрство</span>
+      <span class="code">07 / Партнёрство</span>
       <h2 class="h2">Кому фрахт подходит, а кому нет</h2>
     </div>
     <div class="grid g2">
@@ -684,11 +741,11 @@ form{display:grid;gap:14px}
   </div>
 </section>
 
-<!-- ═══ 07 КАК НАЧАТЬ ═══ -->
-<section class="sec">
+<!-- ═══ 08 КАК НАЧАТЬ ═══ -->
+<section class="sec sec--tint">
   <div class="wrap">
     <div class="head">
-      <span class="code">07 / Старт</span>
+      <span class="code">08 / Старт</span>
       <h2 class="h2">Пять шагов до первой смены</h2>
     </div>
     <div class="steps">
@@ -707,7 +764,7 @@ form{display:grid;gap:14px}
   <img class="cta__swoosh" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODIxIiBoZWlnaHQ9IjQzMSIgdmlld0JveD0iMCAwIDgyMSA0MzEiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik03ODUuOTQzIDE1Mi44ODdDNzUzLjA2NCAxMjYuNTEgNjg2LjEyMiAxMzEuNzU3IDYxOC45NTQgMTU2LjgzNEM1NTAuMjQ4IDE4Mi40ODIgNTE5LjcxNiAyMTguNDQ5IDUxOC4xNjIgMjA5LjY5OUM1MTMuODU2IDE4NS41NDEgNjk3LjA5OCA2My42MjYyIDY3Ni4wNjkgMjcuODE3NEM2NTYuMjg2IC01Ljg2NzQgNTY2LjUxOCAtNC41MzU4NSA0ODUuODMzIDguNjUyNzJDNDQ2LjQxMiAxNS4xMDQzIDM5OC43NjggMjcuODE3NCAzNDcuNjQ0IDQ2LjAzMDlDMzA4LjU0NyA1OS45NDg3IDI2Ny40MTEgNzcuMDg0MyAyMjYuMzU2IDk3LjEwNDlDMjQwLjUyMSA4MC42OTg1IDI2Mi4yNDcgNzQuNDUyOSAyNTUuNzg4IDU5LjI5ODdDMjQ5LjE1IDQzLjczMjQgMjI0Ljc2OSA0MS4yNTk2IDExOC41NyAxMTMuMzUzQzc1LjI0ODMgMTQyLjc1OCAtNTYuOTAyMSAyMzMuNzYyIDI3LjcwMTQgMjk1LjEwOEMxMTkuMDcyIDM2MS4zNTIgMzQ3LjI3MSAyMTcuMjc2IDM1Ni4wNzggMjI2LjUzNEMzNjIuMjYyIDIzMy4wNDkgMjk3LjMyOCAyNjMuNTE2IDMyOC4wODcgMjgzLjA0NUMzNTguOTc2IDMwMi42NTMgNTI2LjE0MyAyNjQuNzg0IDUxNi43MjEgMjg0Ljk3OUM1MTAuNjgzIDI5Ny44ODIgMzU5LjY1NiAyOTEuNyAyODMuODU5IDM1OS44OTRDMTk3LjQ1OSA0MzcuNjQ2IDQ5Mi44MSA0NjAuMTI0IDY3My4zNDkgMzg0LjI0MkM2OTYuMDk1IDM3NC42ODMgNzE2LjMxNSAzNjMuNzE0IDczMy45OTMgMzUxLjgwOUM4MjUuNzg0IDI5MC4wMDQgODQ4LjAyOCAyMDIuNjc3IDc4NS45NDMgMTUyLjg4N1oiIGZpbGw9IiM3OTAwRUIiLz4KPC9zdmc+Cg==" alt="" aria-hidden="true">
   <div class="wrap cta__in">
     <div>
-      <span class="code">08 / Заявка</span>
+      <span class="code">09 / Заявка</span>
       <h2 class="h2">Поставьте эвакуатор на фикс</h2>
       <p class="lede">Расскажем, сколько смен готовы выкупать в вашем городе и на каких условиях. Разбор — бесплатно и без обязательств.</p>
       <div class="contacts">
@@ -745,12 +802,11 @@ form{display:grid;gap:14px}
           </div>
         </div>
         <div class="f-row">
-          <div class="f"><label for="fShifts">Готов смен в месяц</label>
-            <select id="fShifts" name="shifts">
-              <option>До 15</option>
-              <option selected>Около 30</option>
-              <option>Больше 30, есть напарник</option>
-              <option>Пока не решил</option>
+          <div class="f"><label for="fTariff">Тариф</label>
+            <select id="fTariff" name="tariff">
+              <option>За смены — 15 000 ₽ за смену</option>
+              <option>За заказы — 3 000 ₽ за заказ</option>
+              <option selected>Хочу сравнить оба</option>
             </select>
           </div>
           <div class="f"><label for="fYear">Год выпуска</label><input id="fYear" name="year" type="text" placeholder="Например, 2019"></div>
@@ -810,9 +866,13 @@ form{display:grid;gap:14px}
   var $ = function(id){ return document.getElementById(id); };
   var rub = function(v){ return nf.format(Math.round(v)) + " ₽"; };
 
-  var RATE = 15000;      /* ₽ за смену        */
-  var HOURS = 12;        /* часов в смене     */
-  var BASE = 30;         /* смен в базовом предложении */
+  var RATE   = 15000;    /* ₽ за смену                       */
+  var HOURS  = 12;       /* часов в смене                    */
+  var BASE   = 30;       /* смен в базовом предложении       */
+  var ORDERS = 150;      /* заказов в базовом предложении    */
+  var RATE_O = 3000;     /* ₽ за заказ = 450 000 / 150       */
+  var TOTAL  = 450000;   /* сумма, одинаковая в обоих тарифах */
+  var EVEN   = ORDERS / BASE;  /* 5 заказов за смену — точка равенства */
 
   /* склонение: 1 смена · 22 смены · 30 смен */
   function plural(n, one, few, many){
@@ -828,30 +888,50 @@ form{display:grid;gap:14px}
     return nf.format(Math.round(v/1000)) + " тыс";
   }
 
-  /* ── 1. сетка смен в первом экране ─────────────────────────────── */
+  /* ── 1. сетка первого экрана: смены или заказы ─────────────────── */
   (function(){
-    var grid = $("shiftsGrid"); if (!grid) return;
-    var cells = [];
-    for (var i = 1; i <= BASE; i++){
-      var c = document.createElement("div");
-      c.className = "shift"; c.textContent = i;
-      grid.appendChild(c); cells.push(c);
+    var grid = $("shiftsGrid"), tabs = $("heroTabs");
+    if (!grid || !tabs) return;
+    var sum = $("shiftsSum"), unit = $("shiftsUnit"), tick = 0;
+
+    function draw(kind){
+      clearInterval(tick);
+      var isShift = kind === "shift";
+      var count = isShift ? BASE : ORDERS;
+      var rate  = isShift ? RATE : RATE_O;
+      grid.classList.toggle("shifts__grid--order", !isShift);
+      unit.textContent = isShift ? "Каждая смена — 15 000 ₽" : "Каждый заказ — 3 000 ₽";
+
+      grid.innerHTML = "";
+      var cells = [];
+      for (var i = 1; i <= count; i++){
+        var c = document.createElement("div");
+        c.className = "shift";
+        if (isShift) c.textContent = i;
+        grid.appendChild(c); cells.push(c);
+      }
+      if (reduce){
+        cells.forEach(function(c){ c.classList.add("on"); });
+        sum.textContent = rub(count * rate);
+        return;
+      }
+      sum.textContent = "0 ₽";
+      var n = 0, step = Math.max(10, Math.round(2400 / count));
+      tick = setInterval(function(){
+        cells[n].classList.add("on"); n++;
+        sum.textContent = rub(n * rate);
+        if (n >= cells.length) clearInterval(tick);
+      }, step);
     }
-    var sum = $("shiftsSum"), cnt = $("shiftsCount");
-    if (reduce){
-      cells.forEach(function(c){ c.classList.add("on"); });
-      return;
-    }
-    cells.forEach(function(c){ c.classList.remove("on"); });
-    sum.textContent = "0 ₽"; cnt.textContent = "0 из " + BASE;
-    var n = 0;
-    var tick = setInterval(function(){
-      cells[n].classList.add("on");
-      n++;
-      sum.textContent = rub(n * RATE);
-      cnt.textContent = n + " из " + BASE;
-      if (n >= cells.length) clearInterval(tick);
-    }, 70);
+
+    tabs.addEventListener("click", function(e){
+      var btn = e.target.closest("button[data-t]"); if (!btn) return;
+      [].forEach.call(tabs.querySelectorAll("button"), function(x){
+        x.setAttribute("aria-pressed", String(x === btn));
+      });
+      draw(btn.dataset.t);
+    });
+    draw("shift");
   })();
 
   /* ── 2. варианты расстановки смен ──────────────────────────────── */
@@ -884,99 +964,142 @@ form{display:grid;gap:14px}
     });
   })();
 
-  /* ── 3. калькулятор смен ───────────────────────────────────────── */
-  var iShifts = $("iShifts");
+  /* ── 3. калькулятор: сравнение двух тарифов ────────────────────── */
+  var iShifts = $("iShifts"), iOrders = $("iOrders"), iSpeed = $("iSpeed");
+  var tariff = "shift";
 
-  function stairChart(n){
+  /* сколько смен нужно на 450 000 ₽ при каждом тарифе */
+  function cmpChart(speed){
     var W = 720, H = 260, L = 66, R = 16, T = 16, B = 32;
     var pw = W - L - R, ph = H - T - B;
-    var yMax = Math.max(n * RATE, BASE * RATE);
-    var x = function(i){ return L + pw * (i / n); };
+    var xMin = 2, xMax = 12, yMax = ORDERS / xMin;   /* 75 смен при двух заказах */
+    var x = function(v){ return L + pw * (v - xMin) / (xMax - xMin); };
     var y = function(v){ return T + ph * (1 - v / yMax); };
 
-    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Накопленный доход по сменам">';
-    s += '<defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">' +
-         '<stop offset="0%" stop-color="#2E9E4F" stop-opacity=".26"/>' +
-         '<stop offset="100%" stop-color="#2E9E4F" stop-opacity="0"/></linearGradient></defs>';
+    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" ' +
+            'aria-label="Сколько смен нужно на 450 000 рублей при каждом тарифе">';
 
-    [0, .5, 1].forEach(function(f){
-      var yy = y(yMax * f);
-      s += '<line x1="' + L + '" y1="' + yy + '" x2="' + (W-R) + '" y2="' + yy +
-           '" stroke="#E3E6EC" stroke-width="1" fill="none"/>';
-      s += '<text x="' + (L-10) + '" y="' + (yy+4) + '" text-anchor="end" font-size="11" ' +
-           'fill="#98A1B0" font-family="Montserrat, Arial, sans-serif" font-weight="600">' +
-           (f === 0 ? "0" : money(yMax * f)) + '</text>';
+    /* зона, недостижимая физически: больше 60 смен в месяц */
+    s += '<rect x="' + L + '" y="' + T + '" width="' + pw + '" height="' + (y(60) - T) +
+         '" fill="#1C273B" opacity=".05"/>';
+    s += '<text x="' + (L + 8) + '" y="' + (y(60) - 7) + '" font-size="10.5" fill="#98A1B0" ' +
+         'font-family="Montserrat, Arial, sans-serif" font-weight="600">больше 60 смен в месяц не бывает</text>';
+
+    [0, 25, 50, 75].forEach(function(v){
+      s += '<line x1="' + L + '" y1="' + y(v) + '" x2="' + (W-R) + '" y2="' + y(v) +
+           '" stroke="#E3E6EC" stroke-width="1"/>';
+      s += '<text x="' + (L-10) + '" y="' + (y(v)+4) + '" text-anchor="end" font-size="11" ' +
+           'fill="#98A1B0" font-family="Montserrat, Arial, sans-serif" font-weight="600">' + v + '</text>';
     });
 
-    var pts = "";
-    for (var i = 1; i <= n; i++){
-      pts += x(i) + "," + y((i-1) * RATE) + " " + x(i) + "," + y(i * RATE) + " ";
-    }
-    s += '<polygon points="' + L + ',' + y(0) + ' ' + pts + x(n) + ',' + y(0) + '" fill="url(#sg)"/>';
-    s += '<polyline points="' + L + ',' + y(0) + ' ' + pts + '" fill="none" stroke="#2E9E4F" ' +
-         'stroke-width="2.5" stroke-linejoin="round"/>';
-
-    var yb = y(BASE * RATE);
-    s += '<line x1="' + L + '" y1="' + yb + '" x2="' + (W-R) + '" y2="' + yb +
-         '" stroke="#7900EB" stroke-width="1.5" stroke-dasharray="5 4"/>';
-    s += '<text x="' + (W-R) + '" y="' + (yb-8) + '" text-anchor="end" font-size="11" ' +
+    /* тариф за смены — всегда 30 смен */
+    s += '<line x1="' + L + '" y1="' + y(BASE) + '" x2="' + (W-R) + '" y2="' + y(BASE) +
+         '" stroke="#7900EB" stroke-width="2" stroke-dasharray="5 4"/>';
+    s += '<text x="' + (W-R) + '" y="' + (y(BASE)-9) + '" text-anchor="end" font-size="11" ' +
          'fill="#7900EB" font-family="Montserrat, Arial, sans-serif" font-weight="600">' +
-         'базовые 450 000 ₽ за 30 смен</text>';
+         'за смены — всегда 30</text>';
 
-    s += '<circle cx="' + x(n) + '" cy="' + y(n*RATE) + '" r="5" fill="#FFFFFF" ' +
+    /* тариф за заказы — 150 / темп */
+    var pts = [];
+    for (var v = xMin; v <= xMax + 0.001; v += 0.25) pts.push(x(v) + "," + y(ORDERS / v));
+    s += '<polyline points="' + pts.join(" ") + '" fill="none" stroke="#2E9E4F" ' +
+         'stroke-width="2.5" stroke-linejoin="round"/>';
+    s += '<text x="' + x(9.4) + '" y="' + (y(ORDERS/9.4) - 12) + '" font-size="11" fill="#2E9E4F" ' +
+         'font-family="Montserrat, Arial, sans-serif" font-weight="600">за заказы — 150 / темп</text>';
+
+    /* точка равенства */
+    s += '<circle cx="' + x(EVEN) + '" cy="' + y(BASE) + '" r="4" fill="#7900EB"/>';
+    s += '<text x="' + x(EVEN) + '" y="' + (y(BASE) + 20) + '" text-anchor="middle" font-size="10.5" ' +
+         'fill="#6B7688" font-family="Montserrat, Arial, sans-serif" font-weight="600">' +
+         'равенство при 5</text>';
+
+    /* ваш темп */
+    var need = ORDERS / speed;
+    s += '<line x1="' + x(speed) + '" y1="' + T + '" x2="' + x(speed) + '" y2="' + y(0) +
+         '" stroke="#2E9E4F" stroke-width="1" stroke-dasharray="3 4" opacity=".5"/>';
+    s += '<circle cx="' + x(speed) + '" cy="' + y(need) + '" r="5" fill="#FFFFFF" ' +
          'stroke="#2E9E4F" stroke-width="3"/>';
 
-    [0, Math.round(n/3), Math.round(2*n/3), n].forEach(function(i){
-      s += '<text x="' + x(i) + '" y="' + (H-8) + '" text-anchor="middle" font-size="11" ' +
-           'fill="#98A1B0" font-family="Montserrat, Arial, sans-serif" font-weight="600">' +
-           (i === 0 ? "старт" : i + " см.") + '</text>';
+    [2, 5, 8, 12].forEach(function(v){
+      s += '<text x="' + x(v) + '" y="' + (H-8) + '" text-anchor="middle" font-size="11" ' +
+           'fill="#98A1B0" font-family="Montserrat, Arial, sans-serif" font-weight="600">' + v + '</text>';
     });
+    s += '<text x="' + (W-R) + '" y="' + (H-8) + '" text-anchor="end" font-size="10.5" ' +
+         'fill="#98A1B0" font-family="Montserrat, Arial, sans-serif" font-weight="600">' +
+         'заказов за смену</text>';
     return s + '</svg>';
   }
 
-  var crew = "solo";
-
   function render(){
-    var n = +iShifts.value;
-    var month = n * RATE, hours = n * HOURS;
+    var speed = +iSpeed.value;
+    var isShift = tariff === "shift";
+    var n = isShift ? +iShifts.value : +iOrders.value;
 
-    $("vShifts").textContent = n;
-    $("oShifts").innerHTML = n + '<small>' + shiftWord(n) + '</small>';
-    $("oMonth").innerHTML  = nf.format(month) + '<small>₽</small>';
-    $("oHours").innerHTML  = nf.format(hours) + '<small>ч / мес</small>';
-    $("oYear").innerHTML   = nf.format(month * 12) + '<small>₽</small>';
+    var income   = isShift ? n * RATE : n * RATE_O;
+    var orders   = isShift ? Math.round(n * speed) : n;
+    var shifts   = isShift ? n : Math.ceil(n / speed);
+    var effVal   = isShift ? income / Math.max(orders, 1) : income / Math.max(shifts, 1);
 
-    var diff = month - BASE * RATE;
+    $("vShifts").textContent = +iShifts.value;
+    $("vOrders").textContent = +iOrders.value;
+    $("vSpeed").textContent  = speed;
+    $("fieldShifts").hidden  = !isShift;
+    $("fieldOrders").hidden  = isShift;
+
+    $("oShifts").innerHTML = shifts + '<small>' + shiftWord(shifts) + '</small>';
+    $("oMonth").innerHTML  = nf.format(income) + '<small>₽</small>';
+    $("oOrders").innerHTML = nf.format(orders) + '<small>шт</small>';
+    $("oEffK").textContent = isShift ? "Эффективно за заказ" : "Эффективно за смену";
+    $("oEff").innerHTML    = nf.format(Math.round(effVal)) + '<small>₽</small>';
+
+    $("tariffNote").textContent = isShift
+      ? "Платят за время на линии: 30 смен по 12 часов — 450 000 ₽. Сколько заказов придёт, на сумму не влияет."
+      : "Платят за объём: 150 заказов — 450 000 ₽. Темп и график вы задаёте сами, платформа их не гарантирует.";
+
+    var need = Math.ceil(ORDERS / speed);
+    var verdict;
+    if (speed > EVEN){
+      verdict = "Быстрее точки равенства: 150 заказов закроете за " + need + " " + shiftWord(need) +
+                " вместо 30 — тариф за заказы выгоднее.";
+    } else if (speed < EVEN){
+      verdict = "Медленнее точки равенства: на 150 заказов уйдёт " + need + " " + shiftWord(need) +
+                (need > 60 ? " — за месяц столько не отработать. " : " вместо 30. ") +
+                "Тариф за смены надёжнее.";
+    } else {
+      verdict = "Точка равенства: 150 заказов ровно за 30 смен — тарифы дают одинаковые деньги.";
+    }
+    $("speedNote").textContent = verdict;
+
+    var diff = income - TOTAL;
     $("chartNote").textContent = diff === 0 ? "ровно базовое предложение"
       : (diff > 0 ? "+" : "−") + rub(Math.abs(diff)) + " к базовым 450 000 ₽";
 
-    $("stairChart").innerHTML = stairChart(n);
+    $("cmpChart").innerHTML = cmpChart(speed);
 
-    $("breakdown").innerHTML =
-      '<div>Смен в месяц<span>' + n + '</span></div>' +
-      '<div>Ставка за смену<span>' + rub(RATE) + '</span></div>' +
-      '<div>Часов на линии<span>' + nf.format(hours) + ' ч</span></div>' +
-      '<div>Ставка в час<span>' + rub(RATE / HOURS) + '</span></div>' +
-      '<div class="tot">Итого за месяц<span>' + rub(month) + '</span></div>';
+    $("breakdown").innerHTML = isShift
+      ? '<div>Смен в месяц<span>' + n + '</span></div>' +
+        '<div>Ставка за смену<span>' + rub(RATE) + '</span></div>' +
+        '<div>Часов на линии<span>' + nf.format(n * HOURS) + ' ч</span></div>' +
+        '<div>Заказов при вашем темпе<span>' + nf.format(orders) + '</span></div>' +
+        '<div class="tot">Итого за месяц<span>' + rub(income) + '</span></div>'
+      : '<div>Заказов за месяц<span>' + n + '</span></div>' +
+        '<div>Ставка за заказ<span>' + rub(RATE_O) + '</span></div>' +
+        '<div>Смен при вашем темпе<span>' + shifts + '</span></div>' +
+        '<div>Часов на линии<span>' + nf.format(shifts * HOURS) + ' ч</span></div>' +
+        '<div class="tot">Итого за месяц<span>' + rub(income) + '</span></div>';
 
-    var note;
-    if (crew === "solo"){
-      note = n > 31
-        ? "Больше 31 смены в одиночку за месяц не выйдет — понадобится напарник или вторая смена."
-        : "Одна смена в день. 30 смен — это месяц без выходных; обычно берут 22–26 и оставляют дни на отдых и обслуживание.";
-    } else {
-      note = "Две смены в сутки на одной машине. Эвакуатор не простаивает, смены делите с напарником.";
-    }
-    $("crewNote").textContent = note;
-
-    $("calcHint").textContent = "Из калькулятора: " + n + " " + shiftWord(n) +
-                                " → " + rub(month) + " в месяц.";
+    $("calcHint").textContent = isShift
+      ? "Из калькулятора: тариф за смены, " + n + " " + shiftWord(n) + " → " + rub(income) + " в месяц."
+      : "Из калькулятора: тариф за заказы, " + n + " заказов при темпе " + speed +
+        " за смену → " + rub(income) + " в месяц.";
   }
 
   iShifts.addEventListener("input", render);
-  $("segCrew").addEventListener("click", function(e){
-    var b = e.target.closest("button[data-crew]"); if (!b) return;
-    crew = b.dataset.crew;
+  iOrders.addEventListener("input", render);
+  iSpeed.addEventListener("input", render);
+  $("segTariff").addEventListener("click", function(e){
+    var b = e.target.closest("button[data-t]"); if (!b) return;
+    tariff = b.dataset.t;
     [].forEach.call(this.querySelectorAll("button"), function(x){
       x.setAttribute("aria-pressed", String(x === b));
     });
@@ -1023,7 +1146,7 @@ form{display:grid;gap:14px}
       "Город: "        + (v("fCity")  || "—"),
       "Эвакуатор: "    + $("fTruck").value,
       "Год выпуска: "  + (v("fYear")  || "—"),
-      "Смен в месяц: " + $("fShifts").value,
+      "Тариф: "        + $("fTariff").value,
       "Комментарий: "  + (v("fMsg")   || "—"),
       "",
       $("calcHint").textContent
