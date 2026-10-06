@@ -580,18 +580,18 @@ form{display:grid;gap:14px}
     <div class="head">
       <span class="code">05 / Юнит-экономика</span>
       <h2 class="h2">Из чего складывается заказ на 8 000 ₽</h2>
-      <p class="lede">Средний чек по платформе — 8 000 ₽. Вот как он распределяется при типовом городском заказе.</p>
+      <p class="lede">Базовый средний чек по платформе — 8 000 ₽: так он распределяется при типовом городском заказе. Корпоративные заказы и тип техники чек меняют — у манипулятора он примерно вдвое выше.</p>
     </div>
     <div class="ue">
-      <div class="ue__bar" id="ueBar" role="img" aria-label="Структура заказа на 8 000 ₽: водитель 1 000 ₽, топливо и расходники 500 ₽, комиссия платформы 2 000 ₽, остаётся владельцу 4 500 ₽"></div>
+      <div class="ue__bar" id="ueBar" role="img" aria-label="Структура заказа на 8 000 ₽: водитель 1 600 ₽, топливо и расходники 500 ₽, комиссия платформы 2 000 ₽, остаётся владельцу 3 900 ₽"></div>
       <div class="ue__legend" id="ueLegend"></div>
     </div>
     <div class="grid g3" style="margin-top:34px">
-      <div class="card"><div class="fig" style="font-size:1.9rem;color:var(--violet)">≈ 4 500 ₽</div><p class="txt" style="margin-top:12px;font-size:.94rem">остаётся владельцу с заказа после водителя, топлива и комиссии</p></div>
-      <div class="card"><div class="fig" style="font-size:1.9rem;color:var(--ink)">≈ 2 000 ₽</div><p class="txt" style="margin-top:12px;font-size:.94rem">консервативная чистая прибыль с заказа — после налогов, ремонта, простоев и амортизации</p></div>
+      <div class="card"><div class="fig" style="font-size:1.9rem;color:var(--violet)">≈ 3 900 ₽</div><p class="txt" style="margin-top:12px;font-size:.94rem">остаётся владельцу с заказа после водителя, топлива и комиссии</p></div>
+      <div class="card"><div class="fig" style="font-size:1.9rem;color:var(--ink)">≈ 2 000 ₽</div><p class="txt" style="margin-top:12px;font-size:.94rem">консервативная чистая прибыль с заказа — после налогов, ремонта и амортизации</p></div>
       <div class="card"><div class="fig" style="font-size:1.9rem;color:var(--ink)">0 ₽</div><p class="txt" style="margin-top:12px;font-size:.94rem">скрытых платежей: комиссия видна по каждому заказу</p></div>
     </div>
-    <p class="disclaim">Модельный расчёт при среднем чеке 8 000 ₽. Фактические доли зависят от города, дальности подачи и условий с водителем. Не является публичной офертой.</p>
+    <p class="disclaim">Модельный расчёт при среднем чеке 8 000 ₽ и доле водителя 20 % от чека. Фактические доли зависят от города, дальности подачи, типа эвакуатора и условий с водителем. Не является публичной офертой.</p>
   </div>
 </section>
 
@@ -614,6 +614,7 @@ form{display:grid;gap:14px}
           <div class="field__hd"><label for="iCheck">Средний чек</label><span class="field__val" id="vCheck">8 000 ₽</span></div>
           <input type="range" id="iCheck" min="5000" max="14000" step="500" value="8000">
           <div class="field__scale"><span>5 000 ₽</span><span>14 000 ₽</span></div>
+          <p class="form__note">Базовый средний чек по платформе — 8 000 ₽. Поток корпоративных заказов (страховые, дилеры, автосервисы, автопарки) сдвигает его и вверх, и вниз. Чек зависит и от техники: у эвакуатора с манипулятором он примерно вдвое выше.</p>
         </div>
         <div class="field">
           <div class="field__hd"><label for="iTruck">Стоимость эвакуатора</label><span class="field__val" id="vTruck">1 200 000 ₽</span></div>
@@ -626,7 +627,7 @@ form{display:grid;gap:14px}
             <button type="button" data-mode="cons" aria-pressed="true">Консервативный</button>
             <button type="button" data-mode="base" aria-pressed="false">Базовый</button>
           </div>
-          <p class="form__note" id="modeNote">≈ 25 % чека остаётся владельцу после водителя, топлива, комиссии, налогов, ремонта и простоев.</p>
+          <p class="form__note" id="modeNote">≈ 25 % чека остаётся владельцу после водителя, топлива, комиссии, налогов, ремонта и амортизации.</p>
         </div>
       </div>
 
@@ -969,10 +970,10 @@ form{display:grid;gap:14px}
 
   /* ── 2. структура заказа на 8 000 ₽ ────────────────────────────── */
   var UE = [
-    { key:"Водитель",             val:1000, c:"var(--c-driver)", fg:"#FFFFFF" },
+    { key:"Водитель",             val:1600, c:"var(--c-driver)", fg:"#FFFFFF" },
     { key:"Топливо и расходники", val:500,  c:"var(--c-fuel)",   fg:"#1C273B" },
     { key:"Комиссия платформы",   val:2000, c:"var(--c-fee)",    fg:"#FFFFFF" },
-    { key:"Остаётся владельцу",   val:4500, c:"var(--c-profit)", fg:"#FFFFFF" }
+    { key:"Остаётся владельцу",   val:3900, c:"var(--c-profit)", fg:"#FFFFFF" }
   ];
   var ueBar = $("ueBar"), ueLeg = $("ueLegend");
   if (ueBar){
@@ -998,19 +999,19 @@ form{display:grid;gap:14px}
   var MODES = {
     cons: {
       rate: 0.25,
-      note: "≈ 25 % чека остаётся владельцу после водителя, топлива, комиссии, налогов, ремонта и простоев.",
+      note: "≈ 25 % чека остаётся владельцу после водителя, топлива, комиссии, налогов, ремонта и амортизации.",
       rows: [
-        ["Водитель",                    0.125],
-        ["Топливо и расходники",        0.0625],
-        ["Комиссия платформы",          0.25],
-        ["Налоги, ремонт, простои, амортизация", 0.3125]
+        ["Водитель",                      0.20],
+        ["Топливо и расходники",          0.0625],
+        ["Комиссия платформы",            0.25],
+        ["Налоги, ремонт, амортизация",   0.2375]
       ]
     },
     base: {
-      rate: 0.5625,
-      note: "≈ 4 500 ₽ с заказа при чеке 8 000 ₽ — валовая прибыль после водителя, топлива и комиссии платформы.",
+      rate: 0.4875,
+      note: "≈ 3 900 ₽ с заказа при чеке 8 000 ₽ — валовая прибыль после водителя, топлива и комиссии платформы.",
       rows: [
-        ["Водитель",             0.125],
+        ["Водитель",             0.20],
         ["Топливо и расходники", 0.0625],
         ["Комиссия платформы",   0.25]
       ]
